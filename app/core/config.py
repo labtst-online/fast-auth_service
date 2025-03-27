@@ -1,54 +1,69 @@
-import secrets
-from functools import lru_cache
+import os
+from typing import Any
 
-from pydantic import EmailStr, PostgresDsn
+from pydantic import PostgresDsn, field_validator
 from pydantic_core import MultiHostUrl
+from pydantic_core.core_schema import ValidationInfo
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# Determine the path to the .env file relative to this config file's location
+# This goes up two levels from core/ to the auth/ directory
+# You might adjust this based on where you run the app / load env vars from
+env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), '.env')
 
 class Settings(BaseSettings):
-    modele_config = SettingsConfigDict(
-        env_file="../.env",
-        env_ignore_empty=True,
-    )
+    # Load .env file if it exists
+    model_config = SettingsConfigDict(env_file=env_path, extra='ignore')
 
-    # App
-    PROJECT_NAME: str
-    DEBUG: bool = False
-    SECRET_KEY: str = secrets.token_urlsafe(32)
-    
+    APP_ENV: str = "development" # Default to development
+
     # Postgres Database Config
     POSTGRES_SERVER: str
     POSTGRES_PORT: int = 5432
     POSTGRES_USER: str
-    POSTGRES_PASSWORD: str = ""
-    POSTGRES_DB: str = ""
-    
-    @property
-    def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str
+
+    # --- Async SQLAlchemy Database URL ---
+    # Populated by a validator below
+    ASYNC_SQLALCHEMY_DATABASE_URI: PostgresDsn | None = None
+
+    @field_validator("ASYNC_SQLALCHEMY_DATABASE_URI", mode="before")
+    @classmethod
+    def assemble_async_db_connection(cls, v: str | None, info: ValidationInfo) -> Any:
+        if isinstance(v, str):
+            # If the URI is already provided as a string, use it directly
+            return v
+        # Otherwise, build it from components
+        values = info.data
         return MultiHostUrl.build(
-            scheme="postgresql+psycopg",
-            username=self.POSTGRES_USER,
-            password=self.POSTGRES_PASSWORD,
-            host=self.POSTGRES_SERVER,
-            port=self.POSTGRES_PORT,
-            path=self.POSTGRES_DB,
+            scheme="postgresql+asyncpg",  # Use asyncpg driver
+            username=values.get("POSTGRES_USER"),
+            password=values.get("POSTGRES_PASSWORD"),
+            host=values.get("POSTGRES_SERVER"),
+            port=values.get("POSTGRES_PORT"),
+            path=f"{values.get('POSTGRES_DB') or ''}",
         )
 
-    # 60 minutes * 24 hours= 1 days
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
-    # 60 minutes * 24 hours * 7 days = 7 days
-    REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
+    # --- Sync SQLAlchemy Database URL (for Alembic) ---
+    # Populated by a validator below
+    SYNC_SQLALCHEMY_DATABASE_URI: PostgresDsn | None = None
 
-    # Email Config
-    SMTP_TLS: bool = True
-    SMTP_SSL: bool = False
-    SMTP_PORT: int = 587
-    SMTP_HOST: str | None = None
-    SMTP_USER: str | None = None
-    SMTP_PASSWORD: str | None = None
-    EMAILS_FROM_EMAIL: EmailStr | None = None
-    EMAILS_FROM_NAME: EmailStr | None = None
-    
-    
+    @field_validator("SYNC_SQLALCHEMY_DATABASE_URI", mode="before")
+    @classmethod
+    def assemble_sync_db_connection(cls, v: str | None, info: ValidationInfo) -> Any:
+        if isinstance(v, str):
+            return v
+        values = info.data
+        # Use psycopg2 driver for Alembic's sync operations
+        # Make sure 'psycopg2-binary' is installed
+        return MultiHostUrl.build(
+            scheme="postgresql+psycopg2",
+            username=values.get("POSTGRES_USER"),
+            password=values.get("POSTGRES_PASSWORD"),
+            host=values.get("POSTGRES_SERVER"),
+            port=values.get("POSTGRES_PORT"),
+            path=f"{values.get('POSTGRES_DB') or ''}",
+        )
+
 settings = Settings()
