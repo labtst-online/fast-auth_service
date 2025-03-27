@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
 
+    SECRET_KEY: str  # No default, must be set in env
+    JWT_LIFETIME_SECONDS: int = 3600  # Default to 1 hour
 
     SQLALCHEMY_DATABASE_URI: PostgresDsn | None = None
 
