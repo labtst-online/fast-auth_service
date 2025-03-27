@@ -5,6 +5,8 @@ from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.endpoints import router as auth_router
+
 from .core.config import settings
 from .core.database import async_engine, get_async_session
 from .models.user import User
@@ -40,6 +42,7 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+app.include_router(auth_router)
 
 @app.get("/test-db/", summary="Test Database Connection", tags=["Test"])
 async def test_db_connection(
