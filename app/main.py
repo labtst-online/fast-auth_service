@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from .core.config import settings
 from .core.database import async_engine, get_async_session
-from .models.users import User
+from .models.user import User
 
 # Configure logging
 # Basic config, customize as needed (e.g., structured logging)

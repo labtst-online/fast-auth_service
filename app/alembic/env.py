@@ -12,7 +12,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'app'))
 from sqlmodel import SQLModel
 
 from app.core.config import settings
-from app.models.users import Base as UserBase
+from app.models.user import Base as UserBase
 
 config = context.config
 
