@@ -1,17 +1,46 @@
-from typing import AsyncGenerator
+import logging
+from collections.abc import AsyncGenerator
 
-from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from app.core.config import get_settings
+from .config import settings
 
-settings = get_settings()
+logger = logging.getLogger(__name__)
 
-engine = create_async_engine(str(settings.SQLALCHEMY_DATABASE_URI))
+# Create the async engine
+# echo=True is useful for debugging SQL statements in development
+async_engine = create_async_engine(
+    str(settings.ASYNC_SQLALCHEMY_DATABASE_URI),
+    pool_pre_ping=True, # Helps prevent errors from stale connections
+    echo=settings.APP_ENV == "development", # Log SQL only in dev
+    future=True, # Use SQLAlchemy 2.0 style
+)
 
+# Create the async session maker
+AsyncSessionFactory = async_sessionmaker(
+    bind=async_engine,
+    autoflush=False,    # Recommended for async
+    expire_on_commit=False, # Recommended for async / FastAPI background tasks
+    class_=AsyncSession # Specify AsyncSession class
+)
 
-Async_Session = async_sessionmaker(engine, expire_on_commit=False)
-
-async def get_db(request: Request) -> AsyncGenerator[AsyncSession, None]:
-    async with Async_Session() as session:
-        yield session
+# --- Dependency for FastAPI Routes ---
+async def get_async_session() -> AsyncGenerator[AsyncSession]:
+    """
+    FastAPI dependency that provides an AsyncSession for a request.
+    Ensures the session is closed afterwards.
+    """
+    logger.debug("Creating async session")
+    async with AsyncSessionFactory() as session:
+        try:
+            yield session
+            # Optionally commit here if you want automatic commit per request
+            # await session.commit() # Be careful with this pattern
+            logger.debug("Session yielded")
+        except Exception:
+            logger.exception("Session rollback because of exception")
+            await session.rollback()
+            raise
+        finally:
+            # The 'async with' context manager handles closing automatically
+            logger.debug("Session closed")
