@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings  # Import settings for SECRET_KEY
 from app.core.database import get_async_session
-from app.models.user import User, get_user_db  # Import User model and adapter getter
+from app.models.user import User
 
 # Set up logger for this module
 logger = logging.getLogger(__name__)
@@ -34,6 +34,11 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         # Send verification email here (requires email setup)
 
 
+async def get_user_db(session: AsyncSession = Depends(get_async_session)):
+    """Dependency to get the user database adapter."""
+    yield SQLAlchemyUserDatabase(session, User)
+
+
 async def get_user_manager(
     user_db: SQLAlchemyUserDatabase = Depends(get_user_db)
 ) -> AsyncGenerator[UserManager]:
@@ -41,8 +46,3 @@ async def get_user_manager(
     FastAPI Dependency to yield the UserManager instance.
     """
     yield UserManager(user_db)
-
-
-async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-    """Dependency to get the user database adapter."""
-    yield SQLAlchemyUserDatabase(session, User)

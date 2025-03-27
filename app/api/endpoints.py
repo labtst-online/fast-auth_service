@@ -1,10 +1,19 @@
-import fastapi_users
 from fastapi import APIRouter
+from fastapi_users import FastAPIUsers
 
+from app.api.dependencies import get_user_manager
 from app.api.security import auth_backend
-from app.schemas import UserCreate, UserRead, UserUpdate
+from app.models.user import User
+from app.schemas.user import UserCreate, UserRead, UserUpdate
 
 router = APIRouter()
+
+# Initialize FastAPIUsers instance
+fastapi_users = FastAPIUsers[User, int](
+    get_user_manager,
+    [auth_backend],
+)
+
 # Auth routes (/login, /logout)
 router.include_router(
     fastapi_users.get_auth_router(auth_backend), # Pass the specific backend
