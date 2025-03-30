@@ -7,12 +7,13 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'app'))
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
 
-from sqlmodel import SQLModel
+from sqlmodel import SQLModel  # noqa: E402
 
-from app.core.config import settings
-from app.models.user import Base as UserBase
+from app.core.config import settings  # noqa: E402
+from app.models.user import Base as UserBase  # noqa: E402
 
 config = context.config
 
