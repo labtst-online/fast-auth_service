@@ -25,7 +25,7 @@ RUN chmod +x /entrypoint.sh
 COPY . .
 
 # Expose the port the app runs on (adjust if needed)
-EXPOSE 8001
+EXPOSE 8000
 
 # Set the entrypoint script
 ENTRYPOINT ["/entrypoint.sh"]
