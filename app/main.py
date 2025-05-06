@@ -1,5 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
+from importlib.metadata import PackageNotFoundError, version
 
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy import select
@@ -10,7 +11,6 @@ from app.api.endpoints import router as auth_router
 from .core.config import settings
 from .core.database import async_engine, get_async_session
 from .models.user import User
-from importlib.metadata import version, PackageNotFoundError
 
 # Configure logging
 # Basic config, customize as needed (e.g., structured logging)
