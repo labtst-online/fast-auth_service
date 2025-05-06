@@ -10,12 +10,17 @@ from app.api.endpoints import router as auth_router
 from .core.config import settings
 from .core.database import async_engine, get_async_session
 from .models.user import User
+from importlib.metadata import version, PackageNotFoundError
 
 # Configure logging
 # Basic config, customize as needed (e.g., structured logging)
 logging.basicConfig(level=logging.INFO if settings.APP_ENV == "production" else logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+try:
+    __version__ = version("fastboosty-profile_service")
+except PackageNotFoundError:
+    __version__ = "0.0.0"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -38,7 +43,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Auth Service",
     description="Handles user authentication and basic identity.",
-    version="0.1.0",
+    version=__version__,
     lifespan=lifespan
 )
 
