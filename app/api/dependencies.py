@@ -14,10 +14,12 @@ from app.models.user import User
 # Set up logger for this module
 logger = logging.getLogger(__name__)
 
+
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     """
     Manages user-related operations like password hashing, validation etc.
     """
+
     reset_password_token_secret = settings.SECRET_KEY
     verification_token_secret = settings.SECRET_KEY
 
@@ -40,7 +42,7 @@ async def get_user_db(session: AsyncSession = Depends(get_async_session)):
 
 
 async def get_user_manager(
-    user_db: SQLAlchemyUserDatabase = Depends(get_user_db)
+    user_db: SQLAlchemyUserDatabase = Depends(get_user_db),
 ) -> AsyncGenerator[UserManager]:
     """
     FastAPI Dependency to yield the UserManager instance.

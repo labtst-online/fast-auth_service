@@ -22,6 +22,7 @@ try:
 except PackageNotFoundError:
     __version__ = "0.0.0"
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Application startup...")
@@ -44,15 +45,14 @@ app = FastAPI(
     title="Auth Service",
     description="Handles user authentication and basic identity.",
     version=__version__,
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 app.include_router(auth_router)
 
+
 @app.get("/test-db/", summary="Test Database Connection", tags=["Test"])
-async def test_db_connection(
-    session: AsyncSession = Depends(get_async_session)
-):
+async def test_db_connection(session: AsyncSession = Depends(get_async_session)):
     """
     Attempts to retrieve the first user from the database.
     """
@@ -81,10 +81,11 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(
-       "app.main:app",
-       host="0.0.0.0",
-       port=8000, # Or load from config
-       reload=(settings.APP_ENV == "development"),
-       log_level="info"
-   )
+        "app.main:app",
+        host="0.0.0.0",
+        port=8000,  # Or load from config
+        reload=(settings.APP_ENV == "development"),
+        log_level="info",
+    )

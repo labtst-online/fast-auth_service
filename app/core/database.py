@@ -10,17 +10,17 @@ logger = logging.getLogger(__name__)
 
 async_engine = create_async_engine(
     str(settings.SQLALCHEMY_DATABASE_URI),
-    pool_pre_ping=True, # Helps prevent errors from stale connections
-    echo=settings.APP_ENV == "development", # Log SQL only in dev
+    pool_pre_ping=True,  # Helps prevent errors from stale connections
+    echo=settings.APP_ENV == "development",  # Log SQL only in dev
     future=True,
 )
 
 
 AsyncSessionFactory = async_sessionmaker(
     bind=async_engine,
-    autoflush=False,    # Recommended for async
-    expire_on_commit=False, # Recommended for async / FastAPI background tasks
-    class_=AsyncSession # Specify AsyncSession class
+    autoflush=False,  # Recommended for async
+    expire_on_commit=False,  # Recommended for async / FastAPI background tasks
+    class_=AsyncSession,  # Specify AsyncSession class
 )
 
 
