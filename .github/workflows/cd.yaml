@@ -45,7 +45,7 @@ jobs:
       - name: Build and push image
         env:
           VERSION: ${{ steps.get_version.outputs.VERSION }}
-          SERVICE: fastboosty-${{ github.event.repository.name }}
+          SERVICE: ${{ github.event.repository.name }}
         run: |
           TAG=${VERSION#v}
           docker build -t ghcr.io/fotapol/${SERVICE}:${TAG} \
