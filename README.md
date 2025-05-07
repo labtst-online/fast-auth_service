@@ -7,7 +7,7 @@ The Auth Service is responsible for user authentication and issuing JWT tokens. 
 - **FastAPI** – Web framework
 - **PostgreSQL** – Relational database
 - **Docker** – Containerization
-- **GitHub Actions** – Continuous Integration (CI)
+- **GitHub Actions** – Continuous Integration and Continuous Delivery
 - **Pytest** – Test framework
 
 ## API Endpoints
@@ -55,8 +55,8 @@ pytest
 ## GitHub Actions (CI, CD)
 
 Continuous Integration workflow runs tests and ruff formater check on every push and pull request to the main and develop branches.
-Continuous Delivery workflow build and push image to GHCR
+Continuous Delivery workflow build and push image to GHCR.
 
 ## License
 
-The FastBoosty Auth Service is licensed under the terms of the MIT license.
+This service is licensed under the terms of the MIT license.
