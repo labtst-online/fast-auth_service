@@ -1,5 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
+from importlib.metadata import PackageNotFoundError, version
 
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy import select
@@ -15,6 +16,11 @@ from .models.user import User
 # Basic config, customize as needed (e.g., structured logging)
 logging.basicConfig(level=logging.INFO if settings.APP_ENV == "production" else logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+try:
+    __version__ = version("fastboosty-profile_service")
+except PackageNotFoundError:
+    __version__ = "0.0.0"
 
 
 @asynccontextmanager
@@ -38,16 +44,15 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Auth Service",
     description="Handles user authentication and basic identity.",
-    version="0.1.0",
-    lifespan=lifespan
+    version=__version__,
+    lifespan=lifespan,
 )
 
 app.include_router(auth_router)
 
+
 @app.get("/test-db/", summary="Test Database Connection", tags=["Test"])
-async def test_db_connection(
-    session: AsyncSession = Depends(get_async_session)
-):
+async def test_db_connection(session: AsyncSession = Depends(get_async_session)):
     """
     Attempts to retrieve the first user from the database.
     """
@@ -76,10 +81,11 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(
-       "app.main:app",
-       host="0.0.0.0",
-       port=8000, # Or load from config
-       reload=(settings.APP_ENV == "development"),
-       log_level="info"
-   )
+        "app.main:app",
+        host="0.0.0.0",
+        port=8000,  # Or load from config
+        reload=(settings.APP_ENV == "development"),
+        log_level="info",
+    )
