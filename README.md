@@ -59,4 +59,4 @@ Continuous Delivery workflow build and push image to GHCR.
 
 ## License
 
-This service is licensed under the terms of the MIT license.
+This repository is licensed under the terms of the MIT license.
