@@ -1,6 +1,6 @@
-# FastBoosty – Auth Service
+# Auth Service
 
-The Auth Service is responsible for user authentication and issuing JWT tokens. It is part of the FastBoosty app.
+The Auth Service is responsible for user authentication and issuing JWT tokens. It is part of the FastAPI app.
 
 ## Tech Stack
 
@@ -24,13 +24,13 @@ The Auth Service is responsible for user authentication and issuing JWT tokens. 
 
 ## Getting Started
 
-> This service is a core part of the FastBoosty backend. It is recommended to run the full system using [`fastboosty-deployment`](https://github.com/fotapol/fastboosty-deployment).
+> This service is a core part of the Fast backend. It is recommended to run the full system using [`fast-deployment`](https://github.com/labtst-online/fast-deployment).
 
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/fotapol/fastboosty-auth_service.git
-cd fastboosty-auth_service
+git clone https://github.com/labtst-online/fast-auth_service.git
+cd fast-auth_service
 ```
 
 ### 2. Configure
@@ -38,7 +38,7 @@ cd fastboosty-auth_service
 ```bash
 cp .env.sample .env
 ```
-> Change varibles before docker-compose up
+> Change variables before docker-compose up
 
 ### 3. Run with Docker
 
