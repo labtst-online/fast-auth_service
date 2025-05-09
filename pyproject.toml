@@ -1,7 +1,7 @@
 [project]
 name = "auth-service"
-version = "0.1.0"
-description = "Authentication service for Boosty Clone"
+version = "0.1.1"
+description = "Authentication service for FastAPI app"
 requires-python = ">=3.11"
 dependencies = [
     "alembic>=1.15.1",

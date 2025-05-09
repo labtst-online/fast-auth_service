@@ -24,7 +24,7 @@ The Auth Service is responsible for user authentication and issuing JWT tokens. 
 
 ## Getting Started
 
-> This service is a core part of the Fast backend. It is recommended to run the full system using [`fast-deployment`](https://github.com/labtst-online/fast-deployment).
+> This service is a core part of the FastAPI backend. It is recommended to run the full system using [`fast-deployment`](https://github.com/labtst-online/fast-deployment.git).
 
 ### 1. Clone repository
 
