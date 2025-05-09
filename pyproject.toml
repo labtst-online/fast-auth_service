@@ -15,7 +15,6 @@ dependencies = [
     "pytest>=8.3.5",
     "pytest-asyncio>=0.25.3",
     "python-dotenv>=1.0.1",
-    "python-semantic-release>=9.21.1",
     "ruff>=0.11.2",
     "sqlalchemy>=2.0.39",
     "sqlmodel>=0.0.24",
@@ -24,6 +23,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "python-semantic-release>=9.21.1",
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.5", # For testing async code
     "httpx>=0.27.0",          # For testing API endpoints
@@ -43,3 +43,18 @@ ignore = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"
+
+[tool.semantic_release]
+version_toml = [
+    "pyproject.toml:project.version"
+]
+branch = "main"
+upload_to_pypi = false
+upload_to_release = true
+version_source = "tag"
+commit_version_number = true
+changelog_file = "CHANGELOG.md"
+commit_message = "chore(release): bump version to v{version}"
+commit_parser_options = { conventional_commits_version = "0.1.0" }
+major_on_breaking = true
+hvcs = "github"

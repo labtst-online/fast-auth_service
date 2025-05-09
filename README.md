@@ -59,4 +59,4 @@ Continuous Delivery workflow build and push image to GHCR.
 
 ## License
 
-The Fastboosty Auth Service is licensed under the terms of the MIT license.
+This repository is licensed under the terms of the MIT license.
