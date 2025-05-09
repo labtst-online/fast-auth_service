@@ -38,7 +38,7 @@ cd fast-auth_service
 ```bash
 cp .env.sample .env
 ```
-> Change varibles before docker-compose up
+> Change variables before docker-compose up
 
 ### 3. Run with Docker
 
